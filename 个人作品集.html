@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的作品集 | 创意探索者</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --bg-elevated: #ffffff;
+      --bg-card: #ffffff;
+      --text-primary: #0f0f0f;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --accent: #6366f1;
+      --accent-light: #e0e7ff;
+      --accent-glow: rgba(99, 102, 241, 0.15);
+      --border: #e5e7eb;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+      --radius: 20px;
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0a0a0a;
+      --bg-elevated: #141414;
+      --bg-card: #1a1a1a;
+      --text-primary: #f5f5f5;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent: #818cf8;
+      --accent-light: rgba(129, 140, 248, 0.1);
+      --accent-glow: rgba(129, 140, 248, 0.2);
+      --border: #27272a;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    /* ===== 滚动进度条 ===== */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #c084fc, var(--accent));
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+      z-index: 10000;
+      transition: width 0.1s;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ===== 鼠标跟随光效 ===== */
+    .cursor-glow {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+    }
+
+    /* ===== 导航 ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 16px 24px;
+      transition: var(--transition);
+    }
+
+    nav.scrolled {
+      background: rgba(250, 250, 250, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    [data-theme="dark"] nav.scrolled {
+      background: rgba(10, 10, 10, 0.8);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-decoration: none;
+      color: var(--text-primary);
+      position: relative;
+    }
+
+    .nav-logo::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    .nav-logo:hover::after { width: 100%; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-primary);
+      background: var(--accent-light);
+    }
+
+    /* 主题切换按钮 */
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      margin-left: 8px;
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(180deg) scale(1.1);
+      border-color: var(--accent);
+    }
+
+    /* ===== 粒子画布 ===== */
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 120px 24px 80px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 700px;
+    }
+
+    /* 打字机动画 */
+    .typewriter {
+      font-size: clamp(40px, 8vw, 72px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      min-height: 1.2em;
+    }
+
+    .typewriter .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.9em;
+      background: var(--accent);
+      margin-left: 4px;
+      animation: blink 1s infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s 1.5s forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 浮动标签 */
+    .floating-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s 2s forwards;
+    }
+
+    .float-tag {
+      padding: 10px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      animation: float 3s ease-in-out infinite;
+      cursor: default;
+    }
+
+    .float-tag:nth-child(2) { animation-delay: 0.5s; }
+    .float-tag:nth-child(3) { animation-delay: 1s; }
+    .float-tag:nth-child(4) { animation-delay: 1.5s; }
+
+    .float-tag:hover {
+      transform: translateY(-4px) scale(1.05);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* CTA 按钮 */
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s 2.5s forwards;
+    }
+
+    .btn-magnetic {
+      position: relative;
+      padding: 16px 32px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      overflow: hidden;
+    }
+
+    .btn-primary-magnetic {
+      background: var(--text-primary);
+      color: var(--bg);
+    }
+
+    .btn-primary-magnetic::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-primary-magnetic:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-primary-magnetic span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-secondary-magnetic {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary-magnetic:hover {
+      border-color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    /* 滚动提示 */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 0.8s 3s forwards;
+    }
+
+    .scroll-mouse {
+      width: 24px;
+      height: 40px;
+      border: 2px solid var(--text-muted);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .scroll-wheel {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 8px;
+      background: var(--text-muted);
+      border-radius: 2px;
+      animation: scrollWheel 2s infinite;
+    }
+
+    @keyframes scrollWheel {
+      0% { top: 8px; opacity: 1; }
+      100% { top: 24px; opacity: 0; }
+    }
+
+    /* ===== 通用区块 ===== */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+
+    .section-label .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 17px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ===== 关于我 - 手风琴 ===== */
+    .about-accordion {
+      display: grid;
+      gap: 16px;
+    }
+
+    .accordion-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .accordion-item:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .accordion-header {
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .accordion-header:hover {
+      background: var(--accent-light);
+    }
+
+    .accordion-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .accordion-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: var(--accent-light);
+      transition: var(--transition);
+    }
+
+    .accordion-item.active .accordion-icon {
+      transform: scale(1.1) rotate(-5deg);
+    }
+
+    .accordion-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .accordion-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .accordion-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      color: var(--text-muted);
+    }
+
+    .accordion-item.active .accordion-arrow {
+      transform: rotate(180deg);
+      color: var(--accent);
+    }
+
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .accordion-item.active .accordion-body {
+      max-height: 300px;
+    }
+
+    .accordion-content {
+      padding: 0 28px 24px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    /* ===== 技能 - 3D 卡片 ===== */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      perspective: 1000px;
+    }
+
+    .skill-card-3d {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: var(--transition);
+      transform-style: preserve-3d;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card-3d::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    [data-theme="dark"] .skill-card-3d::before {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+    }
+
+    .skill-card-3d:hover::before {
+      left: 100%;
+    }
+
+    .skill-card-3d:hover {
+      transform: translateY(-8px) rotateX(5deg);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .skill-progress {
+      margin-top: 20px;
+    }
+
+    .skill-progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .skill-progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .skill-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #c084fc);
+      border-radius: 3px;
+      width: 0;
+      transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .skill-card-3d.visible .skill-progress-fill {
+      width: var(--progress);
+    }
+
+    /* ===== 项目 - 瀑布流 + 悬停展开 ===== */
+    .projects-masonry {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .project-card-expand {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .project-card-expand:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .project-image {
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-image-bg {
+      position: absolute;
+      inset: 0;
+      transition: transform 0.6s;
+    }
+
+    .project-card-expand:hover .project-image-bg {
+      transform: scale(1.1);
+    }
+
+    .project-image-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .project-image-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .project-image-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .project-image-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+    .project-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+    }
+
+    .project-card-expand:hover .project-image-overlay {
+      opacity: 1;
+    }
+
+    .project-view-btn {
+      padding: 10px 20px;
+      background: white;
+      color: #0f0f0f;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .project-card-expand:hover .project-view-btn {
+      transform: translateY(0);
+    }
+
+    .project-info {
+      padding: 24px;
+    }
+
+    .project-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s, margin 0.4s;
+    }
+
+    .project-card-expand:hover .project-desc {
+      max-height: 100px;
+      margin-top: 12px;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .project-tag {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* ===== 时间线 ===== */
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 40px;
+      opacity: 0;
+      transform: translateX(-30px);
+      transition: all 0.6s;
+    }
+
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -34px;
+      top: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 3px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: var(--transition);
+    }
+
+    .timeline-item:hover .timeline-dot {
+      transform: scale(1.3);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .timeline-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: var(--transition);
+    }
+
+    .timeline-content:hover {
+      box-shadow: var(--shadow);
+      transform: translateX(8px);
+    }
+
+    .timeline-date {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .timeline-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .timeline-desc {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ===== 联系 - 轨道按钮 ===== */
+    .contact-orbit {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .orbit-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .orbit-btn:hover {
+      transform: translateY(-8px) scale(1.1);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .orbit-btn svg {
+      width: 24px;
+      height: 24px;
+      transition: transform 0.3s;
+    }
+
+    .orbit-btn:hover svg {
+      transform: scale(1.2);
+    }
+
+    .orbit-btn span {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ===== 页脚 ===== */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== 滚动显示 ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .typewriter { font-size: 36px; }
+      .timeline { padding-left: 32px; }
+      .orbit-btn { width: 70px; height: 70px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 滚动进度条 -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- 鼠标光效 -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- 粒子画布 -->
+  <canvas id="particles"></canvas>
+
+  <!-- 导航 -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Portfolio.</a>
+      <div class="nav-right">
+        <a href="#about" class="nav-link">关于</a>
+        <a href="#skills" class="nav-link">技能</a>
+        <a href="#projects" class="nav-link">项目</a>
+        <a href="#timeline" class="nav-link">经历</a>
+        <a href="#contact" class="nav-link">联系</a>
+        <button class="theme-toggle" id="themeToggle" title="切换主题">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <h1 class="typewriter" id="typewriter"></h1>
+      <p class="hero-subtitle">热爱创造，享受每一个将想法变为现实的过程。正在不断探索技术与设计的无限可能。</p>
+      <div class="floating-tags">
+        <span class="float-tag">🎨 设计思维</span>
+        <span class="float-tag">💻 全栈开发</span>
+        <span class="float-tag">📊 数据分析</span>
+        <span class="float-tag">🚀 持续学习</span>
+      </div>
+      <div class="hero-cta">
+        <button class="btn-magnetic btn-primary-magnetic" onclick="scrollToSection('projects')">
+          <span>查看作品 ↓</span>
+        </button>
+        <button class="btn-magnetic btn-secondary-magnetic" onclick="scrollToSection('contact')">
+          联系我
+        </button>
+      </div>
+    </div>
+    <div class="scroll-indicator" onclick="scrollToSection('about')">
+      <div class="scroll-mouse">
+        <div class="scroll-wheel"></div>
+      </div>
+      <span>向下探索</span>
+    </div>
+  </section>
+
+  <!-- 关于我 -->
+  <section id="about">
+    <div class="section-header reveal">
+      <div class="section-label"><span class="dot"></span> About</div>
+      <h2 class="section-title">关于我</h2>
+      <p class="section-desc">点击卡片，了解更多</p>
+    </div>
+    <div class="about-accordion reveal">
+      <div class="accordion-item active">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-header-left">
+            <div class="accordion-icon">🎯</div>
+            <div>
+              <div class="accordion-title">我的定位</div>
+              <div class="accordion-subtitle">学生 · 创作者 · 探索者</div>
+            </div>
+          </div>
+          <div class="accordion-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            我是一名充满好奇心的在校学生，不满足于课本知识，喜欢主动探索前沿技术。我相信"做中学"是最有效的成长方式，每个项目都是一次宝贵的学习机会。
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-header-left">
+            <div class="accordion-icon">💡</div>
+            <div>
+              <div class="accordion-title">我的理念</div>
+              <div class="accordion-subtitle">简约 · 实用 · 优雅</div>
+            </div>
+          </div>
+          <div class="accordion-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            好的设计是隐形的。我追求在简约中体现功能，在细节中展现品质。每一个像素、每一行代码，都承载着对用户体验的尊重。
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-header-left">
+            <div class="accordion-icon">🌱</div>
+            <div>
+              <div class="accordion-title">我的目标</div>
+              <div class="accordion-subtitle">成长 · 影响 · 回馈</div>
+            </div>
+          </div>
+          <div class="accordion-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            短期目标是扎实技术基础，积累项目经验；长期希望通过技术创造社会价值，用所学知识帮助更多人，成为能够独当一面的创造者。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 技能 -->
+  <section id="skills">
+    <div class="section-header reveal">
+      <div class="section-label"><span class="dot"></span> Skills</div>
+      <h2 class="section-title">技能图谱</h2>
+      <p class="section-desc">持续精进，永不止步</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card-3d reveal" style="--progress: 85%">
+        <div style="font-size: 32px; margin-bottom: 16px;">⚡</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">前端开发</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.7;">构建响应式、高性能的现代化 Web 界面</p>
+        <div class="skill-progress">
+          <div class="skill-progress-header">
+            <span>熟练度</span>
+            <span>85%</span>
+          </div>
+          <div class="skill-progress-bar">
+            <div class="skill-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="skill-card-3d reveal" style="--progress: 75%">
+        <div style="font-size: 32px; margin-bottom: 16px;">🔧</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">后端开发</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.7;">设计稳健的 API 与数据库架构</p>
+        <div class="skill-progress">
+          <div class="skill-progress-header">
+            <span>熟练度</span>
+            <span>75%</span>
+          </div>
+          <div class="skill-progress-bar">
+            <div class="skill-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="skill-card-3d reveal" style="--progress: 80%">
+        <div style="font-size: 32px; margin-bottom: 16px;">🎨</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">UI/UX 设计</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.7;">打造直观优雅的视觉与交互体验</p>
+        <div class="skill-progress">
+          <div class="skill-progress-header">
+            <span>熟练度</span>
+            <span>80%</span>
+          </div>
+          <div class="skill-progress-bar">
+            <div class="skill-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="skill-card-3d reveal" style="--progress: 70%">
+        <div style="font-size: 32px; margin-bottom: 16px;">📊</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">数据分析</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.7;">从数据中提取洞察，驱动决策</p>
+        <div class="skill-progress">
+          <div class="skill-progress-header">
+            <span>熟练度</span>
+            <span>70%</span>
+          </div>
+          <div class="skill-progress-bar">
+            <div class="skill-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="skill-card-3d reveal" style="--progress: 65%">
+        <div style="font-size: 32px; margin-bottom: 16px;">🤖</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">AI 应用</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.7;">探索人工智能在实际场景中的应用</p>
+        <div class="skill-progress">
+          <div class="skill-progress-header">
+            <span>熟练度</span>
+            <span>65%</span>
+          </div>
+          <div class="skill-progress-bar">
+            <div class="skill-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="skill-card-3d reveal" style="--progress: 90%">
+        <div style="font-size: 32px; margin-bottom: 16px;">✍️</div>
+        <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">技术写作</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.7;">清晰表达复杂概念，分享知识</p>
+        <div class="skill-progress">
+          <div class="skill-progress-header">
+            <span>熟练度</span>
+            <span>90%</span>
+          </div>
+          <div class="skill-progress-bar">
+            <div class="skill-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 项目 -->
+  <section id="projects">
+    <div class="section-header reveal">
+      <div class="section-label"><span class="dot"></span> Projects</div>
+      <h2 class="section-title">精选项目</h2>
+      <p class="section-desc">实践出真知，每个项目都是成长的印记</p>
+    </div>
+    <div class="projects-masonry">
+      <div class="project-card-expand reveal" onclick="showProject('智能校园助手')">
+        <div class="project-image">
+          <div class="project-image-bg project-image-1"></div>
+          <div class="project-image-overlay">
+            <span class="project-view-btn">查看详情 →</span>
+          </div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">智能校园助手</h3>
+          <p style="color: var(--text-secondary); font-size: 14px;">基于 AI 的校园服务聚合平台</p>
+          <p class="project-desc">集成课表查询、成绩分析、智能问答等功能，服务 5000+ 在校学生，日均访问量 3000+。</p>
+          <div class="project-tags">
+            <span class="project-tag">Vue 3</span>
+            <span class="project-tag">Python</span>
+            <span class="project-tag">OpenAI</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card-expand reveal" onclick="showProject('数据可视化平台')">
+        <div class="project-image">
+          <div class="project-image-bg project-image-2"></div>
+          <div class="project-image-overlay">
+            <span class="project-view-btn">查看详情 →</span>
+          </div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">数据可视化平台</h3>
+          <p style="color: var(--text-secondary); font-size: 14px;">交互式数据探索与分析工具</p>
+          <p class="project-desc">支持多维度数据筛选、实时图表更新、自定义仪表盘，帮助用户快速发现数据规律。</p>
+          <div class="project-tags">
+            <span class="project-tag">D3.js</span>
+            <span class="project-tag">React</span>
+            <span class="project-tag">Node.js</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card-expand reveal" onclick="showProject('设计系统组件库')">
+        <div class="project-image">
+          <div class="project-image-bg project-image-3"></div>
+          <div class="project-image-overlay">
+            <span class="project-view-btn">查看详情 →</span>
+          </div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">设计系统组件库</h3>
+          <p style="color: var(--text-secondary); font-size: 14px;">统一、可复用的 UI 组件体系</p>
+          <p class="project-desc">从零搭建包含 50+ 组件的设计系统，支持主题定制、无障碍访问，应用于 3 个产品线。</p>
+          <div class="project-tags">
+            <span class="project-tag">TypeScript</span>
+            <span class="project-tag">Storybook</span>
+            <span class="project-tag">CSS Variable</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card-expand reveal" onclick="showProject('开源贡献记录')">
+        <div class="project-image">
+          <div class="project-image-bg project-image-4"></div>
+          <div class="project-image-overlay">
+            <span class="project-view-btn">查看详情 →</span>
+          </div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">开源贡献记录</h3>
+          <p style="color: var(--text-secondary); font-size: 14px;">参与开源社区，回馈技术生态</p>
+          <p class="project-desc">向多个知名开源项目提交 PR，包括文档改进、Bug 修复、新功能开发，累计 Star 500+。</p>
+          <div class="project-tags">
+            <span class="project-tag">Open Source</span>
+            <span class="project-tag">Community</span>
+            <span class="project-tag">Git</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 经历 -->
+  <section id="timeline">
+    <div class="section-header reveal">
+      <div class="section-label"><span class="dot"></span> Journey</div>
+      <h2 class="section-title">成长轨迹</h2>
+      <p class="section-desc">每一步都算数</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot">🎓</div>
+        <div class="timeline-content">
+          <div class="timeline-date">2024 - 至今</div>
+          <div class="timeline-title">专注深耕技术领域</div>
+          <div class="timeline-desc">系统学习前后端技术栈，参与多个完整项目开发，开始探索 AI 与产品的结合点。</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">🏆</div>
+        <div class="timeline-content">
+          <div class="timeline-date">2023</div>
+          <div class="timeline-title">首次技术竞赛获奖</div>
+          <div class="timeline-desc">参加省级程序设计大赛获得二等奖，这是对自己技术能力的第一次正式认可，也坚定了继续深耕的决心。</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">💻</div>
+        <div class="timeline-content">
+          <div class="timeline-date">2022</div>
+          <div class="timeline-title">写下第一行代码</div>
+          <div class="timeline-desc">在大学计算机课上接触到编程，被代码创造万物的魔力深深吸引，从此开启了自学之路。</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">🌟</div>
+        <div class="timeline-content">
+          <div class="timeline-date">2021</div>
+          <div class="timeline-title">踏入大学校园</div>
+          <div class="timeline-desc">进入理想的专业，开始全新的学习旅程。积极参加社团活动，培养团队协作与沟通能力。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 联系 -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <div class="section-label"><span class="dot"></span> Contact</div>
+      <h2 class="section-title">保持联系</h2>
+      <p class="section-desc">有想法？一起聊聊吧</p>
+    </div>
+    <div class="contact-orbit reveal">
+      <a href="mailto:your.email@example.com" class="orbit-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>邮箱</span>
+      </a>
+      <a href="#" class="orbit-btn" onclick="showWechat(event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        <span>微信</span>
+      </a>
+      <a href="#" class="orbit-btn" onclick="showGithub(event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a href="#" class="orbit-btn" onclick="showBlog(event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        <span>博客</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer>
+    <p>© 2026 用 ❤️ 和 ☕ 精心制作 · 持续更新中</p>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" style="
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--text-primary);
+    color: var(--bg);
+    padding: 16px 28px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+    max-width: 90%;
+    text-align: center;
+  "></div>
+
+  <script>
+    // ===== 打字机效果 =====
+    const typewriterText = '创造，永不止步。';
+    const typewriterEl = document.getElementById('typewriter');
+    let charIndex = 0;
+
+    function typeChar() {
+      if (charIndex < typewriterText.length) {
+        typewriterEl.innerHTML = typewriterText.substring(0, charIndex + 1) + '<span class="cursor"></span>';
+        charIndex++;
+        setTimeout(typeChar, 150 + Math.random() * 100);
+      } else {
+        typewriterEl.innerHTML = typewriterText + '<span class="cursor"></span>';
+      }
+    }
+    setTimeout(typeChar, 500);
+
+    // ===== 鼠标跟随光效 =====
+    const cursorGlow = document.getElementById('cursorGlow');
+    let mouseX = 0, mouseY = 0;
+    let glowX = 0, glowY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateGlow() {
+      glowX += (mouseX - glowX) * 0.1;
+      glowY += (mouseY - glowY) * 0.1;
+      cursorGlow.style.left = glowX + 'px';
+      cursorGlow.style.top = glowY + 'px';
+      requestAnimationFrame(animateGlow);
+    }
+    animateGlow();
+
+    // ===== 粒子系统 =====
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.5 + 0.1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 50; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      // 连线
+      particles.forEach((p1, i) => {
+        particles.slice(i + 1).forEach(p2 => {
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.strokeStyle = `rgba(99, 102, 241, ${0.1 * (1 - dist / 150)})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        });
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // ===== 滚动进度条 =====
+    const progressBar = document.getElementById('progressBar');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrolled / maxScroll) * 100;
+      progressBar.style.width = progress + '%';
+    });
+
+    // ===== 导航栏滚动效果 =====
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // ===== 主题切换 =====
+    const themeToggle = document.getElementById('themeToggle');
+    let isDark = false;
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeToggle.style.transform = isDark ? 'rotate(180deg)' : 'rotate(0deg)';
+    });
+
+    // ===== 平滑滚动 =====
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.getAttribute('href').substring(1);
+        scrollToSection(target);
+      });
+    });
+
+    // ===== 手风琴 =====
+    function toggleAccordion(header) {
+      const item = header.parentElement;
+      const wasActive = item.classList.contains('active');
+      document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
+      if (!wasActive) item.classList.add('active');
+    }
+
+    // ===== 滚动显示动画 =====
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ===== 技能进度条动画 =====
+    const skillObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.skill-card-3d').forEach(el => skillObserver.observe(el));
+
+    // ===== 时间线动画 =====
+    const timelineObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 200);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.timeline-item').forEach(el => timelineObserver.observe(el));
+
+    // ===== Toast =====
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+      }, 3000);
+    }
+
+    function showProject(name) {
+      showToast(`🚀 ${name} · 项目详情页开发中`);
+    }
+
+    function showWechat(e) {
+      e.preventDefault();
+      showToast('💬 微信号：请替换为你的微信号');
+    }
+
+    function showGithub(e) {
+      e.preventDefault();
+      showToast('💻 github.com/请替换为你的用户名');
+    }
+
+    function showBlog(e) {
+      e.preventDefault();
+      showToast('📝 博客地址：请替换为你的博客链接');
+    }
+  </script>
+</body>
+</html>
